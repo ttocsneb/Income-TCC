@@ -89,7 +89,7 @@ public class Main extends ApplicationAdapter {
 		for (Transaction t : save.transactions) {
 			total += t.income - t.expense;
 
-			//Check if the seleccted transaction has been made in less than a week.
+			//Check if the selected transaction has been made in less than a week.
 			if (time - t.date < WEEK) {
 				c++;
 				Gdx.app.log("Within Week!", new Date(t.date).toString());
@@ -108,7 +108,7 @@ public class Main extends ApplicationAdapter {
 		lTotal.setText("$" + total);
 		lAvgExpense.setText("Avg: $" + Math.round(avgExpense * 10)
 				/ 10f);
-		lAvgIncome.setText("Avg: $" + Math.round(avgIncome * 10) / 10f);// TODO
+		lAvgIncome.setText("Avg: $" + Math.round(avgIncome * 10) / 10f);
 
 	}
 
@@ -213,21 +213,25 @@ public class Main extends ApplicationAdapter {
 				//Create the label for the income/expense options.
 				w.add(new VisLabel("Income"));
 				w.add(new VisLabel("Expense")).row();
+				
+				//Create the done button early for use with the text fields.
+				VisTextButton done = new VisTextButton("Done");
 
 				//Create the Income field.
+				//Create the out field without a validator, as the money validator requires the other field and it has not yet been created.
+				final VisValidableTextField out = new VisValidableTextField();
+				//Create th in field using out as a field for the money validator.
 				final VisValidableTextField in = new VisValidableTextField(
-						new MoneyValidator());
+						new MoneyValidator(done, out));
 				in.setText("$0.00");
 				w.add(in).padRight(1);
 
-				//Create the Expense Field.
-				final VisValidableTextField out = new VisValidableTextField(
-						new MoneyValidator());
+				//Set the validator for the out field as the in field has been created.
+				out.addValidator(new MoneyValidator(done, in));
 				out.setText("$0.00");
 				w.add(out).row();
 
 				//Create the Done Button, when pressed, save the settings.
-				VisTextButton done = new VisTextButton("Done");
 				done.addListener(new ChangeListener() {
 
 					@Override
@@ -304,13 +308,37 @@ public class Main extends ApplicationAdapter {
 	 */
 	private class MoneyValidator implements InputValidator {
 
+		private VisTextButton b;
+		private VisValidableTextField otherField;
+		
+		/**
+		 * Create a new Money Validator.  This is for use with a finish button, and a second validator(very specific.)
+		 * @param button the button to enable/disable.
+		 * @param other the other field.
+		 */
+		MoneyValidator(VisTextButton button, VisValidableTextField other) {
+			b = button;
+			otherField = other;
+		}
+		
+		/**
+		 * Called when input must be validated
+		 * @param input text that should be validated
+		 * @return true if input is valid, false otherwise
+		 */
 		@Override
 		public boolean validateInput(String input) {
 			//return true if the string can be parsed.
 			try {
 				Float.parseFloat(input.replaceAll("[$,]", ""));
+				//Check if the other field is valid. If it is, enable the button.
+				if(otherField.isInputValid()) {
+					b.setDisabled(false);
+				}
 				return true;
 			} catch (Exception e) {
+				//Disable the button.
+				b.setDisabled(true);
 				return false;
 			}
 		}
@@ -360,6 +388,7 @@ public class Main extends ApplicationAdapter {
 		stage.addActor(w);
 	}
 
+	/** Called when the Application should render itself. */
 	@Override
 	public void render() {
 		// Clear the Screen.
@@ -372,14 +401,9 @@ public class Main extends ApplicationAdapter {
 		stage.draw();
 	}
 
-	@Override
-	public void resize(int width, int height) {
-		stage.getViewport().update(width, height);
-	}
-
+	/** Called when the Application is destroyed. Preceded by a call to pause(). */
 	@Override
 	public void dispose() {
-		// Free the stage.
 		stage.dispose();
 		VisUI.dispose();
 	}
