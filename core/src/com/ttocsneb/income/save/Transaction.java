@@ -9,10 +9,10 @@ public class Transaction {
 	/**
 	 * The amount of money received.
 	 */
-	public long income;
+	public float income;
 	
 	/**
 	 * The amount of money lost.
 	 */
-	public long expense;
+	public float expense;
 }

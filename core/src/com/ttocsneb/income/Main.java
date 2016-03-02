@@ -75,21 +75,24 @@ public class Main extends ApplicationAdapter {
 	 * Calculate the Totals and averages for the info window.
 	 */
 	private void calculate() {
-		//Reset the values to 0
+		// Reset the values to 0
 		total = 0;
 		avgExpense = 0;
 		avgIncome = 0;
 
 		int c = 0;
-		
-		//Get the current time, used to find if a transaction as been made more than a week ago.
+
+		// Get the current time, used to find if a transaction as been made more
+		// than a week ago.
 		long time = new Date().getTime();
 
-		//Go through each transaction, add up the totals, and average the averages.
+		// Go through each transaction, add up the totals, and average the
+		// averages.
 		for (Transaction t : save.transactions) {
 			total += t.income - t.expense;
 
-			//Check if the selected transaction has been made in less than a week.
+			// Check if the selected transaction has been made in less than a
+			// week.
 			if (time - t.date < WEEK) {
 				c++;
 				Gdx.app.log("Within Week!", new Date(t.date).toString());
@@ -100,14 +103,13 @@ public class Main extends ApplicationAdapter {
 								+ " days");
 			}
 		}
-		//Get the averages.
+		// Get the averages.
 		avgExpense /= c;
 		avgIncome /= c;
 
-		//Set the values for the info window.
-		lTotal.setText("$" + total);
-		lAvgExpense.setText("Avg: $" + Math.round(avgExpense * 10)
-				/ 10f);
+		// Set the values for the info window.
+		lTotal.setText("$" + Math.round(total * 10) / 10f);
+		lAvgExpense.setText("Avg: $" + Math.round(avgExpense * 10) / 10f);
 		lAvgIncome.setText("Avg: $" + Math.round(avgIncome * 10) / 10f);
 
 	}
@@ -116,49 +118,50 @@ public class Main extends ApplicationAdapter {
 	 * Create the Info Window.
 	 */
 	private void initInfo() {
-		//Create the actual window, with a size of 300x250
+		// Create the actual window, with a size of 300x250
 		VisWindow w = new VisWindow("Info");
 		w.setBounds(540 - 300, 0, 300, 250);
 
-		//Create the balance label.
+		// Create the balance label.
 		w.add(new VisLabel("Balance")).colspan(2).row();
 		w.add(lTotal = new VisLabel("")).pad(10).colspan(2).row();
 
-		//Craete the week info.
+		// Craete the week info.
 		w.add(new VisLabel("Week")).colspan(2).row();
 		w.add(new VisLabel("Income"));
 		w.add(new VisLabel("Expence")).row();
-		w.add(lAvgExpense = new VisLabel("")).pad(10);
-		w.add(lAvgIncome = new VisLabel("")).pad(10).row();
+		w.add(lAvgIncome = new VisLabel("")).pad(10);
+		w.add(lAvgExpense = new VisLabel("")).pad(10).row();
 		calculate();
 
-		//Create a new Transaction button.  When pressed a new window will be created.
+		// Create a new Transaction button. When pressed a new window will be
+		// created.
 		VisTextButton ntrans = new VisTextButton("New Transaction");
 		ntrans.addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				//Create a new Window with a size of 350x250
+				// Create a new Window with a size of 350x250
 				final VisWindow w = new VisWindow("New Transaction");
-				w.setBounds(540/2-350/2, 720/2-250/2, 350, 250);
+				w.setBounds(540 / 2 - 350 / 2, 720 / 2 - 250 / 2, 350, 250);
 
 				// //////////DATE/////////////
-				//Create the date option.
-				
-				//Hold the date in a table.
+				// Create the date option.
+
+				// Hold the date in a table.
 				VisTable t = new VisTable();
 
 				t.add(new VisLabel("Date")).padBottom(15).colspan(3).row();
-				
-				//Get the current date.
+
+				// Get the current date.
 				String[] d = new Date().toString().split(" ");
 
-				//Create the month option.
+				// Create the month option.
 				final VisSelectBox<Month> month = new VisSelectBox<Month>();
 				month.setItems(Month.values());
 				t.add(month).padRight(5);
 
-				//Set the selected month to the current month.
+				// Set the selected month to the current month.
 				if (d[1].toLowerCase().equals("jan"))
 					month.setSelected(Month.JAN);
 				else if (d[1].toLowerCase().equals("feb"))
@@ -184,7 +187,7 @@ public class Main extends ApplicationAdapter {
 				else if (d[1].toLowerCase().equals("dec"))
 					month.setSelected(Month.DEC);
 
-				//Get the day of the moth/year
+				// Get the day of the moth/year
 				int da = 0;
 				int yr = 0;
 				try {
@@ -194,115 +197,122 @@ public class Main extends ApplicationAdapter {
 
 				}
 
-				//Create the day option, and set the selected day to today.
+				// Create the day option, and set the selected day to today.
 				final NumberSelector day = new NumberSelector("Day", da, 1, 31);
 				t.add(day).padRight(5);
 
-				//Create the year option, and set the selected year to this year.
+				// Create the year option, and set the selected year to this
+				// year.
 				final NumberSelector year = new NumberSelector("Year", yr,
 						1900, yr);
 				t.add(year);
-				
-				//add the table to the window.
+
+				// add the table to the window.
 				w.add(t).colspan(2).row();
 
 				// /////////TRANSACTION/////////////
 
 				w.add(new VisLabel("Transaction")).pad(15).colspan(2).row();
 
-				//Create the label for the income/expense options.
+				// Create the label for the income/expense options.
 				w.add(new VisLabel("Income"));
 				w.add(new VisLabel("Expense")).row();
-				
-				//Create the done button early for use with the text fields.
+
+				// Create the done button early for use with the text fields.
 				VisTextButton done = new VisTextButton("Done");
 
-				//Create the Income field.
-				//Create the out field without a validator, as the money validator requires the other field and it has not yet been created.
+				// Create the Income field.
+				// Create the out field without a validator, as the money
+				// validator requires the other field and it has not yet been
+				// created.
 				final VisValidableTextField out = new VisValidableTextField();
-				//Create th in field using out as a field for the money validator.
+				// Create th in field using out as a field for the money
+				// validator.
 				final VisValidableTextField in = new VisValidableTextField(
 						new MoneyValidator(done, out));
 				in.setText("$0.00");
 				w.add(in).padRight(1);
 
-				//Set the validator for the out field as the in field has been created.
+				// Set the validator for the out field as the in field has been
+				// created.
 				out.addValidator(new MoneyValidator(done, in));
 				out.setText("$0.00");
 				w.add(out).row();
 
-				//Create the Done Button, when pressed, save the settings.
+				// Create the Done Button, when pressed, save the settings.
 				done.addListener(new ChangeListener() {
 
 					@Override
 					public void changed(ChangeEvent event, Actor actor) {
 						Transaction t = new Transaction();
 
-						//Convert the selected date to a timestamp.
+						// Convert the selected date to a timestamp.
 						try {
 							t.date = new SimpleDateFormat("yyyy-MM-dd",
-									Locale.ENGLISH).parse(year.getValue() + "-"
-									+ month.getSelected().getMonth() + "-"
-									+ day.getValue()).getTime();
+									Locale.ENGLISH).parse(
+									year.getValue() + "-"
+											+ month.getSelected().getMonth()
+											+ "-" + day.getValue()).getTime();
 
 							Gdx.app.log("TEST", new Date(t.date).toString());
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
-						
-						//Set the expense.
+
+						// Set the expense.
 						try {
-							t.expense = Long.parseLong(out.getText()
+							t.expense = Float.parseFloat(out.getText()
 									.replaceAll("[$,]", ""));
 						} catch (Exception e) {
 
 						}
 
-						//Set the income.
+						// Set the income.
 						try {
-							t.income = Long.parseLong(in.getText().replaceAll(
-									"[$,]", ""));
+							t.income = Float.parseFloat(in.getText()
+									.replaceAll("[$,]", ""));
 						} catch (Exception e) {
 						}
 
-						//Save the transaction.
+						// Save the transaction.
 						save.transactions.add(t);
 						Save.save();
 						addTrans(t);
-						//Recalculate the total/average.
+						// Recalculate the total/average.
 						calculate();
-						//Close the window.
+						// Close the window.
 						w.fadeOut();
 					}
 				});
 				w.add(done).padTop(5);
 
-				//Create a cancel button.
+				// Create a cancel button.
 				VisTextButton cancel = new VisTextButton("Cancel");
 				cancel.addListener(new ChangeListener() {
 
 					@Override
 					public void changed(ChangeEvent event, Actor actor) {
-						//Close the window without saving.
+						// Close the window without saving.
 						w.fadeOut();
 					}
 				});
 				cancel.setColor(Color.RED);
 				w.add(cancel);
 
-				//add the window to the stage.
+				// add the window to the stage.
 				stage.addActor(w.fadeIn());
 
 			}
 		});
 		w.add(ntrans).colspan(2);
 
-		//Add the window to the stage.
+		// Add the window to the stage.
 		stage.addActor(w);
 	}
 
 	/**
 	 * Validates money fields to only accept money.
+	 * 
 	 * @author Ben
 	 *
 	 */
@@ -310,34 +320,41 @@ public class Main extends ApplicationAdapter {
 
 		private VisTextButton b;
 		private VisValidableTextField otherField;
-		
+
 		/**
-		 * Create a new Money Validator.  This is for use with a finish button, and a second validator(very specific.)
-		 * @param button the button to enable/disable.
-		 * @param other the other field.
+		 * Create a new Money Validator. This is for use with a finish button,
+		 * and a second validator(very specific.)
+		 * 
+		 * @param button
+		 *            the button to enable/disable.
+		 * @param other
+		 *            the other field.
 		 */
 		MoneyValidator(VisTextButton button, VisValidableTextField other) {
 			b = button;
 			otherField = other;
 		}
-		
+
 		/**
 		 * Called when input must be validated
-		 * @param input text that should be validated
+		 * 
+		 * @param input
+		 *            text that should be validated
 		 * @return true if input is valid, false otherwise
 		 */
 		@Override
 		public boolean validateInput(String input) {
-			//return true if the string can be parsed.
+			// return true if the string can be parsed.
 			try {
 				Float.parseFloat(input.replaceAll("[$,]", ""));
-				//Check if the other field is valid. If it is, enable the button.
-				if(otherField.isInputValid()) {
+				// Check if the other field is valid. If it is, enable the
+				// button.
+				if (otherField.isInputValid()) {
 					b.setDisabled(false);
 				}
 				return true;
 			} catch (Exception e) {
-				//Disable the button.
+				// Disable the button.
 				b.setDisabled(true);
 				return false;
 			}
@@ -347,6 +364,7 @@ public class Main extends ApplicationAdapter {
 
 	/**
 	 * Add a transaction to the save object.
+	 * 
 	 * @param t
 	 */
 	private void addTrans(Transaction t) {
@@ -363,24 +381,24 @@ public class Main extends ApplicationAdapter {
 	 */
 	private void initPrevTrans() {
 
-		//Create a window 300x450
+		// Create a window 300x450
 		VisWindow w = new VisWindow("Transactions");
 		w.setBounds(540 - 300, 720 - 450, 300, 450);
 
-		//Create a table to hold the transactions in.
+		// Create a table to hold the transactions in.
 		trans = new VisTable(true);
 
-		//Add a title to the window.
+		// Add a title to the window.
 		w.add(new VisLabel("Date")).padRight(40);
 		w.add(new VisLabel("Income"));
 		w.add(new VisLabel("Expense")).row();
 
-		//Add all transactions from previous sessions.
+		// Add all transactions from previous sessions.
 		for (Transaction t : save.transactions) {
 			addTrans(t);
 		}
 
-		//Make the table scroll.
+		// Make the table scroll.
 		VisScrollPane scroll = new VisScrollPane(trans);
 		scroll.setColor(Color.DARK_GRAY);
 		scroll.setSmoothScrolling(true);
