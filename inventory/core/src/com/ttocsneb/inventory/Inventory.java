@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.VisUI;
 import com.ttocsneb.inventory.save.SaveData;
+import com.ttocsneb.inventory.window.Orders;
 import com.ttocsneb.inventory.window.Stock;
 
 public class Inventory extends ApplicationAdapter {
@@ -17,7 +18,6 @@ public class Inventory extends ApplicationAdapter {
 	 * The stage contains/renders all objects held within it.
 	 */
 	Stage stage;
-
 
 	/*
 	 * (non-Javadoc)
@@ -36,17 +36,36 @@ public class Inventory extends ApplicationAdapter {
 		// Load the assets for the stage.
 		VisUI.load();
 
-		stage.addActor(new Stock(stage).window);
-		
+		/*Order o = new Order();
+		o.address = "123 wilder Dr";
+		o.name = "Jonathon Dower";
+		o.id = 7;
+		o.shipped = false;
+		o.orders = new OrderItem[2];
+		o.orders[0] = new OrderItem();
+		o.orders[0].id = 42;
+		o.orders[0].amount = 5;
+		o.orders[0].price = 1.02f * 5;
+
+		o.orders[1] = new OrderItem();
+		o.orders[1].id = 1;
+		o.orders[1].amount = 10;
+		o.orders[1].price = 6f * 10;
+		save.orders.add(o);
+		save.save();*/
+
+		new Stock(stage);
+
+		new Orders(stage);
+
 		/*
 		 * SaveData.Item i = save.new Item(); i.id = 42; i.name = "TestItem";
 		 * i.price = 1.02f; i.stock = 64;
 		 * 
 		 * save.stock.put(i.id, i); save.save();
 		 */
-	}
 
-	
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -80,7 +99,7 @@ public class Inventory extends ApplicationAdapter {
 	 */
 	@Override public void resize(int width, int height) {
 		// Resize the stage when the window resizes.
-		stage.getViewport().update(width, width);
+		stage.getViewport().update(width, width, true);
 	}
 
 	/*
